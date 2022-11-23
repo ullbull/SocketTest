@@ -5,7 +5,7 @@
 // Link with ws2_32.lib
 #pragma comment(lib, "Ws2_32.lib")
 
-int custom_exit(int exit_code) {
+void custom_exit(int exit_code) {
 	WSACleanup();
 	if (exit_code != NO_ERROR)
 		printf("Error code = %d\n", exit_code);

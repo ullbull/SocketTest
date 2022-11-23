@@ -18,7 +18,7 @@ void user_send(int socket) {
 	}
 }
 
-int custom_exit(int exit_code) {
+void custom_exit(int exit_code) {
 	WSACleanup();
 	if (exit_code != NO_ERROR)
 		printf("Error code = %d\n", exit_code);
