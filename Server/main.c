@@ -19,7 +19,7 @@ int main()
 	WSADATA wsaData;
 	int i_result;
 	SOCKET server_socket;
-	SOCKET client_socket;
+	SOCKET accept_socket;
 	struct sockaddr_in server_address;
 
 	const char* ip_address = "127.0.0.1";
@@ -76,8 +76,8 @@ int main()
 	//----------------------
 	// Accept the connection.	
 	printf("Waiting for connection on %s:%d ...\n", ip_address, port);
-	client_socket = accept(server_socket, NULL, NULL);
-	if (client_socket == INVALID_SOCKET) {
+	accept_socket = accept(server_socket, NULL, NULL);
+	if (accept_socket == INVALID_SOCKET) {
 		printf("Socket error %d\n", WSAGetLastError());
 		closesocket(server_socket);
 		custom_exit(WSAGetLastError());
@@ -89,7 +89,7 @@ int main()
 
 	// Send a message to the connected client.
 	char server_message[256] = { "You have reached the server!" };
-	send(client_socket, server_message, sizeof(server_message), 0);
+	send(accept_socket, server_message, sizeof(server_message), 0);
 
 	// Receive data from the client
 	char message[512];
@@ -97,13 +97,17 @@ int main()
 	int max_print = 10;
 	long total_received = 0;
 	while (1) {
-		n_bytes = recv(client_socket, message, sizeof(message), 0);
-
+		n_bytes = recv(accept_socket, message, sizeof(message), 0);
+		
+		if (n_bytes == SOCKET_ERROR) {
+			printf("Socket error %d\n", WSAGetLastError());
+			closesocket(server_socket);
+			custom_exit(WSAGetLastError());
+		}
 		if (n_bytes == 0) {
 			printf("\nClient disconnected.\n");
 			break;
 		}
-
 		if (n_bytes) {
 			total_received += n_bytes;
 			printf("\rReceived bytes: %d", total_received);
@@ -115,8 +119,8 @@ int main()
 	}
 
 	// Close client socket
-	shutdown(client_socket, SD_BOTH);
-	closesocket(client_socket);
+	shutdown(accept_socket, SD_BOTH);
+	closesocket(accept_socket);
 
 	custom_exit(0);
 	return 0;
