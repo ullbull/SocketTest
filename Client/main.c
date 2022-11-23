@@ -5,7 +5,7 @@
 #include<string.h>
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
 
-void user_send(int socket) {
+void user_send(SOCKET socket) {
 	char message[256];
 
 	while (1) {
@@ -31,7 +31,7 @@ int main()
 {
 	WSADATA wsaData;
 	int i_result;
-	SOCKET my_socket;
+	SOCKET client_socket;
 	struct sockaddr_in server_address;
 
 	const char* ip_address = "127.0.0.1";
@@ -43,8 +43,8 @@ int main()
 		custom_exit(i_result);
 
 	// create socket
-	my_socket = socket(AF_INET, SOCK_STREAM, 0);
-	if (my_socket == INVALID_SOCKET) {
+	client_socket = socket(AF_INET, SOCK_STREAM, 0);
+	if (client_socket == INVALID_SOCKET) {
 		printf("Socket error %d\n", WSAGetLastError());
 		custom_exit(WSAGetLastError());
 	}
@@ -60,10 +60,10 @@ int main()
 	}
 	// connect to server
 	printf("Connecting to %s:%d ...\n", ip_address, port);
-	i_result = connect(my_socket, (SOCKADDR*)&server_address, sizeof(server_address));
+	i_result = connect(client_socket, (SOCKADDR*)&server_address, sizeof(server_address));
 	if (i_result == SOCKET_ERROR) {
 		wprintf(L"connect function failed with error: %ld\n", WSAGetLastError());
-		i_result = closesocket(my_socket);
+		i_result = closesocket(client_socket);
 		if (i_result == SOCKET_ERROR)
 			wprintf(L"closesocket function failed with error: %ld\n", WSAGetLastError());
 		custom_exit(WSAGetLastError());
@@ -71,14 +71,14 @@ int main()
 
 	// receive message
 	char server_response[256];
-	recv(my_socket, server_response, sizeof(server_response), 0);
+	recv(client_socket, server_response, sizeof(server_response), 0);
 	printf("Received data from server: %s\n", server_response);
 
-	user_send(my_socket);
+	user_send(client_socket);
 
 	printf("Closing socket ...\n");
-	shutdown(my_socket, SD_BOTH);
-	i_result = closesocket(my_socket);
+	shutdown(client_socket, SD_BOTH);
+	i_result = closesocket(client_socket);
 	if (i_result == SOCKET_ERROR) {
 		wprintf(L"closesocket function failed with error: %ld\n", WSAGetLastError());
 		custom_exit(WSAGetLastError());
