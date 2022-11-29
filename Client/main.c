@@ -12,7 +12,7 @@ void user_send(SOCKET socket) {
 		printf("Enter a message or \"q\" to quit:\n");
 		scanf_s("%s", message, sizeof(message));
 
-		if (message[0] == 'q') return;
+		if (strcmp(message, "q") == 0) return;
 
 		send(socket, message, strlen(message), 0);
 	}
