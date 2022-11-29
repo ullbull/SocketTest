@@ -109,12 +109,12 @@ int main()
 			break;
 		}
 		if (n_bytes) {
-			total_received += n_bytes;
-			printf("\rReceived bytes: %d", total_received);
-			//for (int i = 0; i < n_bytes && i < max_print; i++) {
-			//	putchar(message[i]);
-			//}
-			//printf("\n");
+			//total_received += n_bytes;
+			//printf("\rReceived bytes: %d", total_received);
+			for (int i = 0; i < n_bytes && i < max_print; i++) {
+				putchar(message[i]);
+			}
+			printf("\n");
 		}
 	}
 
