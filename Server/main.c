@@ -75,7 +75,7 @@ int main()
 
 	//----------------------
 	// Accept the connection.	
-	printf("Waiting for connection on %s:%d ...\n", ip_address, port);
+	printf("Waiting for connection on port %d ...\n", port);
 	accept_socket = accept(server_socket, NULL, NULL);
 	if (accept_socket == INVALID_SOCKET) {
 		printf("Socket error %d\n", WSAGetLastError());
